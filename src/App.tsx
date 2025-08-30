@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {useEffect} from "react";
+import {createBrowserRouter, RouterProvider, Link, Outlet, NavLink} from "react-router-dom";
+import BookingPage from "./pages/BookingPage";
+import NotFound from "./pages/NotFound";
+import {useSettingsStore} from "./store/settings";
 
-function App() {
-  const [count, setCount] = useState(0)
+const router = createBrowserRouter([
+    {path: "/", element: <Shell/>, children: [{index: true, element: <BookingPage/>}]},
+    {path: "*", element: <NotFound/>},
+]);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+export default function App() {
+    return <RouterProvider router={router}/>;
 }
 
-export default App
+function Shell() {
+    const api = import.meta.env.VITE_API_URL;
+
+    const hydrate = useSettingsStore((s) => s.hydrate);
+
+    useEffect(() => {
+        hydrate();
+    }, [hydrate]);
+
+    return (
+        <div className="mx-auto max-w-5xl p-6 space-y-6">
+            <header className="flex items-center justify-between">
+                <Link to="/" className="text-2xl font-bold">🦷 Dentist Booking</Link>
+                <span className="text-sm text-slate-400">API: <code className="text-sky-400">{api}</code></span>
+            </header>
+
+            <nav className="flex gap-3 text-sm">
+                <NavLink to="/" end
+                         className={({isActive}) => isActive ? "text-sky-400" : "text-slate-300 hover:text-slate-100"}>
+                    Booking
+                </NavLink>
+            </nav>
+
+            <Outlet/>
+        </div>
+    );
+}
