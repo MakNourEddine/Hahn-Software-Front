@@ -1,9 +1,9 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {AppointmentsApi} from "../api/appointments";
-import type {AppointmentDto} from "../lib/types";
+import type {AppointmentListItem} from "../lib/types";
 
 export function useAppointments(dentistId: string, date: string) {
-    return useQuery<AppointmentDto[], Error>({
+    return useQuery<AppointmentListItem[], Error>({
         queryKey: ["appointments", dentistId, date],
         queryFn: () => AppointmentsApi.listByDentist(dentistId, date),
         enabled: !!dentistId && !!date,
